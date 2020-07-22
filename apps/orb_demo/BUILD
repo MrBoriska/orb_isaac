@@ -19,3 +19,13 @@ isaac_app(
         "viewers",
     ],
 )
+
+isaac_app(
+    name = "orb_demo_rs",
+    modules = [
+        "//packages/orb/components:extract_visualize_orb",
+        "realsense",
+        "sight",
+        "viewers",
+    ],
+)

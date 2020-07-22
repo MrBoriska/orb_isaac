@@ -1,0 +1,142 @@
+{
+  "name": "orb_demo_rs",
+  "modules": [
+    "//packages/orb/components:extract_visualize_orb",
+    "realsense",
+    "sight",
+    "viewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "realsense",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "realsense",
+            "type": "isaac::RealsenseCamera"
+          }
+        ]
+      },
+      {
+        "name": "extract_visualize_orb",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "extract_visualize_orb",
+            "type": "isaac::orb::ExtractAndVisualizeOrb"
+          }
+        ]
+      },
+      {
+        "name": "image_keypoint_viewer",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "isaac.viewers.ImageKeypointViewer",
+            "type": "isaac::viewers::ImageKeypointViewer"
+          }
+        ]
+      },
+      {
+        "name": "color_camera_viewer",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "isaac.viewers.ColorCameraViewer",
+            "type": "isaac::viewers::ColorCameraViewer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "realsense/realsense/color",
+        "target": "extract_visualize_orb/extract_visualize_orb/input_image"
+      },
+      {
+        "source": "extract_visualize_orb/extract_visualize_orb/coordinates",
+        "target": "image_keypoint_viewer/isaac.viewers.ImageKeypointViewer/coordinates"
+      },
+      {
+        "source": "realsense/realsense/color",
+        "target": "color_camera_viewer/isaac.viewers.ColorCameraViewer/color_listener"
+      },
+      {
+        "source": "extract_visualize_orb/extract_visualize_orb/features",
+        "target": "image_keypoint_viewer/isaac.viewers.ImageKeypointViewer/features"
+      }
+    ]
+  },
+  "config": {
+    "realsense": {
+      "realsense": {
+        "align_to_color": false,
+        "auto_exposure_priority": false,
+        "enable_color": true,
+        "cols": 1280,
+        "rows": 720,
+        "color_framerate": 30
+      }
+    },
+    "extract_visualize_orb": {
+      "extract_visualize_orb": {
+        "max_features": 250,
+        "fast_threshold": 20,
+        "grid_num_cells_linear": 8,
+        "downsampling_factor": 0.7,
+        "max_levels": 4
+      }
+    },
+    "color_camera_viewer": {
+      "isaac.viewers.ColorCameraViewer": {
+        "target_fps": 45
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+      "port": 3000,
+      "ui_config": {
+        "windows": {
+        "orb_overlay": {
+          "renderer": "2d",
+          "channels": [
+            { "name": "orb_demo_rs/color_camera_viewer/isaac.viewers.ColorCameraViewer/Color" },
+            { "name": "orb_demo_rs/extract_visualize_orb/extract_visualize_orb/orb_overlay" }
+          ]
+        },
+        "2d Features Colored": {
+          "renderer": "2d",
+          "dims": {
+            "width": 512,
+            "height": 512
+          },
+          "channels": [
+            {
+              "name": "orb_demo_rs/color_camera_viewer/isaac.viewers.ColorCameraViewer/Color",
+              "active": true
+            },
+            {
+              "name": "orb_demo_rs/image_keypoint_viewer/isaac.viewers.ImageKeypointViewer/keypoints",
+              "active": true
+            }
+          ]
+        }
+        }
+      }
+      }
+    }
+  }
+}
