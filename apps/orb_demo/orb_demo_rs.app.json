@@ -86,8 +86,8 @@
         "align_to_color": false,
         "auto_exposure_priority": false,
         "enable_color": true,
-        "cols": 1280,
-        "rows": 720,
+        "color_height": 720,
+        "color_width": 1280,
         "color_framerate": 30
       }
     },
